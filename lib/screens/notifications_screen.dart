@@ -36,7 +36,13 @@ class _NotificationScreenState extends State<NotificationsScreen> {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text("Bildirimler"),
+          title: Text(
+            "Bildirimler",
+            style: Theme.of(context)
+                .textTheme
+                .headlineSmall
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
           centerTitle: true,
         ),
         body: Padding(

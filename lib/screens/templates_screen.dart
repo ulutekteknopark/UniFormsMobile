@@ -43,7 +43,13 @@ class _TemplateScreenState extends State<TemplateScreen> {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Şablonlar'),
+          title: Text(
+            'Şablonlar',
+            style: Theme.of(context)
+                .textTheme
+                .headlineSmall
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
           centerTitle: true,
         ),
         body: Padding(

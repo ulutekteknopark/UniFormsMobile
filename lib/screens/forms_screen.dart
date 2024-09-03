@@ -54,7 +54,13 @@ class _FormsScreenState extends State<FormsScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFFEF7FF),
-        title: const Text('Formlar'),
+        title: Text(
+          'Formlar',
+          style: Theme.of(context)
+              .textTheme
+              .headlineSmall
+              ?.copyWith(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
       ),
       body: Stack(

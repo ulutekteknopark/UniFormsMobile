@@ -89,7 +89,7 @@ class _SplashState extends State<Splash> {
             ],
           ),
           Positioned(
-            bottom: 24,
+            bottom: 40,
             left: 0,
             right: 0,
             child: Center(

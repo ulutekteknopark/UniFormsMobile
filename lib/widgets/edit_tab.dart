@@ -1,5 +1,6 @@
 import 'package:deneme2/models/check_box_component.dart';
 import 'package:deneme2/models/form_component.dart';
+import 'package:deneme2/models/matris_component.dart';
 import 'package:deneme2/models/radio_button_component.dart';
 import 'package:deneme2/models/text_field_component.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import '../screens/create-form-dialogs/add_radio_button_dialog.dart';
 import '../screens/create-form-dialogs/add_rating_scale_dialog.dart';
 import '../screens/create-form-dialogs/add_text_field_dialog.dart';
 import '../screens/create-form-dialogs/edit_title.dart';
+import '../screens/create-form-dialogs/add_matris_dialog.dart';
 import 'create_form_menu_card.dart';
 
 class EditTab extends StatefulWidget {
@@ -88,6 +90,8 @@ class EditTabState extends State<EditTab> {
                       showAddDropdownDialog(context, _addComponent),
                   onAddRatingScale: () =>
                       showAddRatingScaleDialog(context, _addComponent),
+                  onAddMatris: () =>
+                      showAddMatrisDialog(context, _addComponent),
                 );
               },
               icon: Icon(Icons.add, color: Colors.white),
@@ -148,6 +152,9 @@ class EditTabState extends State<EditTab> {
                                 component: component);
                           } else if (component is RatingScaleComponent) {
                             showAddRatingScaleDialog(context, _updateComponent,
+                                component: component);
+                          } else if (component is MatrisComponent) {
+                            showAddMatrisDialog(context, _updateComponent,
                                 component: component);
                           }
                         },

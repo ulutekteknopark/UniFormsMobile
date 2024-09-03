@@ -24,7 +24,10 @@ class FirebaseAuthService {
 
       if (user != null) {
         if (user.emailVerified) {
-          Navigator.pushReplacementNamed(context, '/home');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+          );
         } else {
           showSnackBar(context, 'Lütfen emailinizi onaylayın.');
         }

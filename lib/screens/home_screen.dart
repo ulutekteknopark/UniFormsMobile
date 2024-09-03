@@ -1,3 +1,4 @@
+import 'package:deneme2/managers/text_manager.dart';
 import 'package:deneme2/screens/notifications_screen.dart';
 import 'package:deneme2/screens/forms_screen.dart';
 import 'package:deneme2/screens/templates_screen.dart';
@@ -20,6 +21,14 @@ class _HomeScreenState extends State<HomeScreen> {
     NotificationsScreen(),
     SettingsScreen()
   ];
+  int _currentIndex = 0;
+
+  final List<Widget> _pages = [
+    const FormsScreen(),
+    const TemplateScreen(),
+    const NotificationsScreen(),
+    const SettingsScreen()
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -27,51 +36,49 @@ class _HomeScreenState extends State<HomeScreen> {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Color(0xFFF3EDF7),
-          selectedIconTheme: const IconThemeData(
+          selectedIconTheme: IconThemeData(
             size: 28,
-            color: Colors.black,
           ),
-          unselectedIconTheme: const IconThemeData(
+          unselectedIconTheme: IconThemeData(
             size: 28,
             color: Colors.grey,
           ),
-          selectedItemColor: Colors.black,
+          selectedItemColor: Color.fromARGB(255, 125, 17, 192),
           // Seçili yazı rengi
           unselectedItemColor: Colors.grey,
         ),
       ),
       home: Scaffold(
-        body: Center(
-          child: widgetList[myIndex],
-        ),
+        body: _pages[_currentIndex],
         bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
           onTap: (index) {
             setState(() {
-              myIndex = index;
+              _currentIndex = index;
             });
           },
-          currentIndex: myIndex,
-          type: BottomNavigationBarType.fixed, // Simge büyümesini önler
-          items: [
+          selectedItemColor: const Color.fromARGB(255, 125, 17, 192),
+          unselectedItemColor: Colors.grey,
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
+          items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              //icon: Image.asset(
-              //'assets/icons/ic_form.png',
-              icon: Icon(Icons.assignment),
-              label: 'Formlar',
+              icon: const Icon(Icons.assignment),
+              label: TextManager().forms,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.language),
-              label: 'Şablonlar',
+              icon: const Icon(Icons.language),
+              label: TextManager().template,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_none),
-              label: 'Bildirimler',
+              icon: const Icon(Icons.notifications),
+              label: TextManager().notifications,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Ayarlar',
+              icon: const Icon(Icons.settings),
+              label: TextManager().settings,
             ),
           ],
         ),

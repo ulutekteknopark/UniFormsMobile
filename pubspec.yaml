@@ -45,6 +45,7 @@ dependencies:
   share: ^2.0.4
   firebase_dynamic_links: ^6.0.5
   firebase_analytics: ^11.3.0
+  flutter_colorpicker: ^1.1.0
 
 
 dev_dependencies:

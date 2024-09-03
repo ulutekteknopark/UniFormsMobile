@@ -8,6 +8,7 @@ void createFormMenuCard({
   required VoidCallback onAddRadioButtons,
   required VoidCallback onAddDropdown,
   required VoidCallback onAddRatingScale,
+  required VoidCallback onAddMatris,
 }) {
   showModalBottomSheet(
     context: context,
@@ -75,6 +76,13 @@ void createFormMenuCard({
               onTap: () {
                 Navigator.pop(context);
                 onAddRatingScale();
+              },
+            ),
+            ListTile(
+              title: Text('Matris Ekle'),
+              onTap: () {
+                Navigator.pop(context);
+                onAddMatris();
               },
             ),
           ],

@@ -1,3 +1,4 @@
+import 'package:deneme2/models/matris_component.dart';
 import 'package:deneme2/models/radio_button_component.dart';
 import 'package:deneme2/models/rating_scale_component.dart';
 import 'package:deneme2/models/text_field_component.dart';
@@ -29,6 +30,8 @@ abstract class FormComponent {
         return DropdownComponent.fromJson(json);
       case 'rating_scale':
         return RatingScaleComponent.fromJson(json);
+      case 'matris':
+        return MatrisComponent.fromJson(json);
       default:
         throw Exception('Unknown form component type');
     }
