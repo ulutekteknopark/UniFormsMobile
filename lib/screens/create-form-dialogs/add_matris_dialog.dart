@@ -13,6 +13,16 @@ void showAddMatrisDialog(
   final _matrisColorController = ValueNotifier<Color>(Colors.white);
   final _rowNumController = ValueNotifier<int>(2);
   final _colNumController = ValueNotifier<int>(3);
+  bool isRequired = false;
+
+  if (component != null) {
+    _headlineController.text = component.headline;
+    _headlineColorController.value = component.headlineColor;
+    _matrisColorController.value = component.matrisColor;
+    _rowNumController.value = component.rowNum;
+    _colNumController.value = component.colNum;
+    isRequired = component.isRequired; // Initialize the boolean value
+  }
 
   showDialog(
     context: context,
@@ -97,6 +107,21 @@ void showAddMatrisDialog(
                       ),
                     ],
                   ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Zorunlu alan', style: TextStyle(fontSize: 16)),
+                      Checkbox(
+                        value: isRequired,
+                        onChanged: (bool? newValue) {
+                          setState(() {
+                            isRequired = newValue ?? false;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -111,12 +136,13 @@ void showAddMatrisDialog(
                 onPressed: () {
                   if (_headlineController.text.isNotEmpty) {
                     final newComponent = MatrisComponent(
-                      id: Uuid().v4(),
+                      id: component?.id ?? Uuid().v4(),
                       headline: _headlineController.text,
                       rowNum: _rowNumController.value,
                       colNum: _colNumController.value,
                       headlineColor: _headlineColorController.value,
                       matrisColor: _matrisColorController.value,
+                      isRequired: isRequired,
                     );
                     onAddComponent(newComponent);
                     Navigator.pop(context);
