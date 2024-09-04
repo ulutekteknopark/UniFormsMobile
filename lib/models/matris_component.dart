@@ -21,7 +21,20 @@ class MatrisComponent extends FormComponent {
   });
 
   @override
-  Widget buildComponent({Function(String)? onChanged}) {
+  Widget buildComponent({
+    Function(String)? onChanged,
+    String initialValue = '',
+    bool enabled = true,
+  }) {
+    // Convert the initialValue string into a matrix
+    List<List<String>> initialValues = List.generate(
+      rowNum,
+          (rowIndex) => List.generate(
+        colNum,
+            (colIndex) => initialValue,
+      ),
+    );
+
     return _MatrisComponentWidget(
       id: id,
       headline: headline,
@@ -31,6 +44,8 @@ class MatrisComponent extends FormComponent {
       matrisColor: matrisColor,
       isRequired: isRequired,
       onChanged: onChanged,
+      initialValues: initialValues,
+      enabled: enabled,
     );
   }
 
@@ -70,7 +85,6 @@ class MatrisComponent extends FormComponent {
     );
   }
 }
-
 class _MatrisComponentWidget extends StatefulWidget {
   final String id;
   final String headline;
@@ -80,6 +94,8 @@ class _MatrisComponentWidget extends StatefulWidget {
   final Color matrisColor;
   final bool isRequired;
   final Function(String)? onChanged;
+  final List<List<String>> initialValues;
+  final bool enabled;
 
   _MatrisComponentWidget({
     required this.id,
@@ -90,6 +106,8 @@ class _MatrisComponentWidget extends StatefulWidget {
     required this.matrisColor,
     required this.isRequired,
     this.onChanged,
+    this.initialValues = const [],
+    this.enabled = true,
   });
 
   @override
@@ -97,14 +115,23 @@ class _MatrisComponentWidget extends StatefulWidget {
 }
 
 class __MatrisComponentWidgetState extends State<_MatrisComponentWidget> {
-  List<List<TextEditingController>> _controllers = [];
+  late List<List<TextEditingController>> _controllers;
 
   @override
   void initState() {
     super.initState();
     _controllers = List.generate(
       widget.rowNum,
-      (_) => List.generate(widget.colNum, (_) => TextEditingController()),
+          (rowIndex) => List.generate(
+        widget.colNum,
+            (colIndex) => TextEditingController(
+          text: widget.initialValues.isNotEmpty &&
+              widget.initialValues.length > rowIndex &&
+              widget.initialValues[rowIndex].length > colIndex
+              ? widget.initialValues[rowIndex][colIndex]
+              : '',
+        ),
+      ),
     );
   }
 
@@ -157,12 +184,15 @@ class __MatrisComponentWidgetState extends State<_MatrisComponentWidget> {
                       padding: const EdgeInsets.all(8.0),
                       child: TextField(
                         controller: _controllers[rowIndex][colIndex],
-                        onChanged: (value) {
+                        onChanged: widget.enabled
+                            ? (value) {
                           widget.onChanged?.call(value);
-                        },
+                        }
+                            : null,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                         ),
+                        enabled: widget.enabled, // Field'in etkin olup olmadığını kontrol et
                       ),
                     );
                   }),

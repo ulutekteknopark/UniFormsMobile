@@ -19,7 +19,11 @@ class RatingScaleComponent extends FormComponent {
   });
 
   @override
-  Widget buildComponent({Function(String)? onChanged}) {
+  Widget buildComponent({
+    Function(String)? onChanged,
+    String initialValue = '',
+    bool enabled = true,
+  }) {
     return _RatingScaleComponentWidget(
       id: id,
       title: title,
@@ -28,6 +32,8 @@ class RatingScaleComponent extends FormComponent {
       numberOfOptions: numberOfOptions,
       isRequired: isRequired,
       onChanged: onChanged,
+      initialValue: initialValue,
+      enabled: enabled,
     );
   }
 
@@ -64,7 +70,6 @@ class RatingScaleComponent extends FormComponent {
     );
   }
 }
-
 class _RatingScaleComponentWidget extends StatefulWidget {
   final String id;
   final String title;
@@ -73,6 +78,8 @@ class _RatingScaleComponentWidget extends StatefulWidget {
   final int numberOfOptions;
   final bool isRequired;
   final Function(String)? onChanged;
+  final String initialValue;
+  final bool enabled;
 
   _RatingScaleComponentWidget({
     required this.id,
@@ -82,6 +89,8 @@ class _RatingScaleComponentWidget extends StatefulWidget {
     required this.numberOfOptions,
     required this.isRequired,
     this.onChanged,
+    this.initialValue = '',
+    this.enabled = true,
   });
 
   @override
@@ -92,6 +101,12 @@ class _RatingScaleComponentWidget extends StatefulWidget {
 class __RatingScaleComponentWidgetState
     extends State<_RatingScaleComponentWidget> {
   int? _selectedValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedValue = int.tryParse(widget.initialValue) ?? 0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,12 +163,14 @@ class __RatingScaleComponentWidgetState
                 min: 0,
                 max: widget.numberOfOptions.toDouble(),
                 divisions: widget.numberOfOptions,
-                onChanged: (double value) {
+                onChanged: widget.enabled
+                    ? (double value) {
                   setState(() {
                     _selectedValue = value.toInt();
                   });
                   widget.onChanged?.call(_selectedValue.toString());
-                },
+                }
+                    : null,
                 label: _selectedValue?.toString(),
               ),
             ),

@@ -15,13 +15,19 @@ class RadioButtonComponent extends FormComponent {
   });
 
   @override
-  Widget buildComponent({Function(String)? onChanged}) {
+  Widget buildComponent({
+    Function(String)? onChanged,
+    String initialValue = '',
+    bool enabled = true,
+  }) {
     return _RadioButtonComponentWidget(
       id: id,
       title: title,
       options: options,
       isRequired: isRequired,
       onChanged: onChanged,
+      initialValue: initialValue,
+      enabled: enabled,
     );
   }
 
@@ -52,13 +58,14 @@ class RadioButtonComponent extends FormComponent {
     );
   }
 }
-
 class _RadioButtonComponentWidget extends StatefulWidget {
   final String id;
   final String title;
   final List<String> options;
   final bool isRequired;
   final Function(String)? onChanged;
+  final String initialValue;
+  final bool enabled;
 
   _RadioButtonComponentWidget({
     required this.id,
@@ -66,6 +73,8 @@ class _RadioButtonComponentWidget extends StatefulWidget {
     required this.options,
     required this.isRequired,
     this.onChanged,
+    this.initialValue = '',
+    this.enabled = true,
   });
 
   @override
@@ -76,6 +85,12 @@ class _RadioButtonComponentWidget extends StatefulWidget {
 class __RadioButtonComponentWidgetState
     extends State<_RadioButtonComponentWidget> {
   int? _selectedValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedValue = widget.options.indexOf(widget.initialValue);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,12 +133,14 @@ class __RadioButtonComponentWidgetState
                       Radio<int>(
                         value: index,
                         groupValue: _selectedValue,
-                        onChanged: (int? value) {
+                        onChanged: widget.enabled
+                            ? (int? value) {
                           setState(() {
                             _selectedValue = value;
+                            widget.onChanged?.call(option);
                           });
-                          widget.onChanged?.call(option);
-                        },
+                        }
+                            : null,
                       ),
                       Expanded(
                         child: Text(

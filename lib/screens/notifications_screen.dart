@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import '../models/notification_model.dart';
 import '../widgets/notification_item.dart';
 
@@ -12,55 +11,58 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationsScreen> {
-  List<NotificationModel> notifications = [];
+  late Stream<List<NotificationModel>> _notificationsStream;
 
   @override
   void initState() {
     super.initState();
-    notifications = [
-      NotificationModel(title: 'Notification 1', body: 'Subtitle 1'),
-      NotificationModel(title: 'Notification 2', body: 'Subtitle 2'),
-      NotificationModel(title: 'Notification 3', body: 'Subtitle 3'),
-      NotificationModel(title: 'Notification 4', body: 'Subtitle 4'),
-      NotificationModel(title: 'Notification 5', body: 'Subtitle 5')
-    ];
+    _notificationsStream = FirebaseFirestore.instance
+        .collection('notifications')
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+        .map((doc) => NotificationModel.fromJson(doc.data()))
+        .toList());
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-        appBarTheme: AppBarTheme(color: Color(0xFFFEF7FF)),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFFFEF7FF),
+        title: Text(
+          "Bildirimler",
+          style: Theme.of(context)
+              .textTheme
+              .headlineSmall
+              ?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Bildirimler",
-            style: Theme.of(context)
-                .textTheme
-                .headlineSmall
-                ?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 16),
-              Expanded(
-                  child: ListView.builder(
-                itemCount: notifications.length,
-                itemBuilder: (context, index) {
-                  final notification = notifications[index];
-                  return buildNotificationItem(context, notification);
-                },
-              )),
-            ],
-          ),
-        ),
+      body: StreamBuilder<List<NotificationModel>>(
+        stream: _notificationsStream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Bildirimler yüklenirken hata oluştu'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('Bildirim bulunamadı'));
+          }
+
+          final notifications = snapshot.data!;
+
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ListView.builder(
+              itemCount: notifications.length,
+              itemBuilder: (context, index) {
+                final notification = notifications[index];
+                return NotificationItem(notification: notification);
+              },
+            ),
+          );
+        },
       ),
     );
   }

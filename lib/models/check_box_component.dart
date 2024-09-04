@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'form_component.dart';
 
 class CheckBoxComponent extends FormComponent {
@@ -16,13 +15,19 @@ class CheckBoxComponent extends FormComponent {
   });
 
   @override
-  Widget buildComponent({Function(String)? onChanged}) {
+  Widget buildComponent({
+    Function(String)? onChanged,
+    String initialValue = '',
+    bool enabled = true,
+  }) {
     return _CheckBoxComponentWidget(
       id: id,
       title: title,
       options: options,
       isRequired: isRequired,
       onChanged: onChanged,
+      initialValue: initialValue,
+      enabled: enabled,
     );
   }
 
@@ -53,13 +58,14 @@ class CheckBoxComponent extends FormComponent {
     );
   }
 }
-
 class _CheckBoxComponentWidget extends StatefulWidget {
   final String id;
   final String title;
   final List<String> options;
   final bool isRequired;
   final Function(String)? onChanged;
+  final String initialValue;
+  final bool enabled;
 
   _CheckBoxComponentWidget({
     required this.id,
@@ -67,6 +73,8 @@ class _CheckBoxComponentWidget extends StatefulWidget {
     required this.options,
     required this.isRequired,
     this.onChanged,
+    this.initialValue = '',
+    this.enabled = true,
   });
 
   @override
@@ -75,12 +83,23 @@ class _CheckBoxComponentWidget extends StatefulWidget {
 }
 
 class __CheckBoxComponentWidgetState extends State<_CheckBoxComponentWidget> {
-  List<bool> _selectedOptions = [];
+  late List<bool> _selectedOptions;
 
   @override
   void initState() {
     super.initState();
     _selectedOptions = List<bool>.filled(widget.options.length, false);
+
+    // Set initial values based on initialValue
+    if (widget.initialValue.isNotEmpty) {
+      List<String> selectedOptions = widget.initialValue.split(',');
+      for (var option in selectedOptions) {
+        int index = widget.options.indexOf(option);
+        if (index != -1) {
+          _selectedOptions[index] = true;
+        }
+      }
+    }
   }
 
   @override
@@ -123,12 +142,14 @@ class __CheckBoxComponentWidgetState extends State<_CheckBoxComponentWidget> {
                     children: [
                       Checkbox(
                         value: _selectedOptions[index],
-                        onChanged: (bool? value) {
+                        onChanged: widget.enabled
+                            ? (bool? value) {
                           setState(() {
                             _selectedOptions[index] = value ?? false;
                           });
                           widget.onChanged?.call(option);
-                        },
+                        }
+                            : null,
                       ),
                       Expanded(
                         child: Text(

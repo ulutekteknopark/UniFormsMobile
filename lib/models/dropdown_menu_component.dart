@@ -15,13 +15,19 @@ class DropdownComponent extends FormComponent {
   });
 
   @override
-  Widget buildComponent({Function(String)? onChanged}) {
+  Widget buildComponent({
+    Function(String)? onChanged,
+    String initialValue = '',
+    bool enabled = true,
+  }) {
     return _DropdownComponentWidget(
       id: id,
       title: title,
       options: options,
       isRequired: isRequired,
       onChanged: onChanged,
+      initialValue: initialValue,
+      enabled: enabled,
     );
   }
 
@@ -59,6 +65,8 @@ class _DropdownComponentWidget extends StatefulWidget {
   final List<String> options;
   final bool isRequired;
   final Function(String)? onChanged;
+  final String initialValue;
+  final bool enabled;
 
   _DropdownComponentWidget({
     required this.id,
@@ -66,6 +74,8 @@ class _DropdownComponentWidget extends StatefulWidget {
     required this.options,
     required this.isRequired,
     this.onChanged,
+    this.initialValue = '',
+    this.enabled = true,
   });
 
   @override
@@ -75,6 +85,15 @@ class _DropdownComponentWidget extends StatefulWidget {
 
 class __DropdownComponentWidgetState extends State<_DropdownComponentWidget> {
   String? _selectedValue;
+
+  @override
+  void initState() {
+    super.initState();
+    // Set initial value
+    _selectedValue = widget.initialValue.isNotEmpty && widget.options.contains(widget.initialValue)
+        ? widget.initialValue
+        : null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,21 +140,21 @@ class __DropdownComponentWidgetState extends State<_DropdownComponentWidget> {
                     child: Text(option),
                   );
                 }).toList(),
-                onChanged: (String? newValue) {
+                onChanged: widget.enabled
+                    ? (String? newValue) {
                   setState(() {
                     _selectedValue = newValue;
                   });
                   widget.onChanged?.call(newValue ?? '');
-                },
-                underline: SizedBox(),
-                // Alt çizgi kaldırıldı
+                }
+                    : null,
+                underline: SizedBox(), // Alt çizgi kaldırıldı
                 style: TextStyle(
                   color: Colors.black87,
                   fontSize: 16,
                 ),
                 iconSize: 24,
-                icon: Icon(Icons.arrow_drop_down,
-                    color: Colors.black87), // İkon rengi ve boyutu ayarlandı
+                icon: Icon(Icons.arrow_drop_down, color: Colors.black87), // İkon rengi ve boyutu ayarlandı
               ),
             ),
             SizedBox(height: 8),

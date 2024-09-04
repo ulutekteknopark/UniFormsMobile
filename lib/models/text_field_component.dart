@@ -13,12 +13,18 @@ class TextFieldComponent extends FormComponent {
   });
 
   @override
-  Widget buildComponent({Function(String)? onChanged}) {
+  Widget buildComponent({
+    Function(String)? onChanged,
+    String initialValue = '',
+    bool enabled = true,
+  }) {
     return _TextFieldComponentWidget(
       id: id,
       title: title,
       isRequired: isRequired,
       onChanged: onChanged,
+      initialValue: initialValue,
+      enabled: enabled,
     );
   }
 
@@ -46,18 +52,21 @@ class TextFieldComponent extends FormComponent {
     );
   }
 }
-
 class _TextFieldComponentWidget extends StatefulWidget {
   final String id;
   final String title;
   final bool isRequired;
   final Function(String)? onChanged;
+  final String initialValue;
+  final bool enabled;
 
   _TextFieldComponentWidget({
     required this.id,
     required this.title,
     required this.isRequired,
     this.onChanged,
+    this.initialValue = '',
+    this.enabled = true,
   });
 
   @override
@@ -66,8 +75,13 @@ class _TextFieldComponentWidget extends StatefulWidget {
 }
 
 class __TextFieldComponentWidgetState extends State<_TextFieldComponentWidget> {
-  // ignore: unused_field
-  String _text = '';
+  late String _text;
+
+  @override
+  void initState() {
+    super.initState();
+    _text = widget.initialValue;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,18 +119,22 @@ class __TextFieldComponentWidgetState extends State<_TextFieldComponentWidget> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: TextField(
+                controller: TextEditingController(text: _text),
                 decoration: InputDecoration(
                   contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   hintText: 'Cevabınızı buraya yazın...',
                   border: InputBorder.none,
                 ),
-                onChanged: (String value) {
+                onChanged: widget.enabled
+                    ? (String value) {
                   setState(() {
                     _text = value;
                     widget.onChanged?.call(value);
                   });
-                },
+                }
+                    : null,
+                enabled: widget.enabled,
               ),
             ),
             if (widget.isRequired)

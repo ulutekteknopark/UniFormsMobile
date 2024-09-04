@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import '../models/form_model.dart';
 import '../models/form_response_model.dart';
 
@@ -10,7 +12,7 @@ class FormResponseService {
 
   Future<FormModel> fetchForm() async {
     final doc =
-        await FirebaseFirestore.instance.collection('forms').doc(formId).get();
+    await FirebaseFirestore.instance.collection('forms').doc(formId).get();
     return FormModel.fromJson(doc.data()!);
   }
 
@@ -31,6 +33,23 @@ class FormResponseService {
     return emailRegex.hasMatch(email);
   }
 
+  static Future<FormModel> fetchFormById(String formId) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('forms') // Form koleksiyonunun adını buraya yazın
+          .doc(formId)
+          .get();
+
+      if (doc.exists) {
+        return FormModel.fromJson(doc.data()!);
+      } else {
+        throw Exception('Form bulunamadı');
+      }
+    } catch (e) {
+      throw Exception('Form yüklenirken hata oluştu: $e');
+    }
+  }
+
   Future<void> submitForm({
     required String email,
     required String firstName,
@@ -47,8 +66,7 @@ class FormResponseService {
     if (await isEmailAlreadyUsed(email)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Center(
-              child: Text('Bu e-posta adresi ile form zaten cevaplanmış.')),
+          content: Center(child: Text('Bu e-posta adresi ile form zaten cevaplanmış.')),
         ),
       );
       return;
@@ -72,32 +90,68 @@ class FormResponseService {
 
     if (!allRequiredAnswered) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content:
-                Center(child: Text('Lütfen tüm zorunlu alanları doldurun.'))),
+        SnackBar(content: Center(child: Text('Lütfen tüm zorunlu alanları doldurun.'))),
       );
       return;
     }
 
     try {
+      final docRef = FirebaseFirestore.instance.collection('form_responses').doc();
       final formResponse = FormResponseModel(
         formId: formId,
         email: email,
         name: firstName,
         surname: lastName,
         responses: responses,
+        userId: FirebaseAuth.instance.currentUser!.uid,
+        responseId: docRef.id,  // Assign the Firestore document ID
       );
+
+      await docRef.set(formResponse.toJson());
+
+      final formOwner = FirebaseAuth.instance.currentUser!.uid;
+      final notification = {
+        'title': '$firstName $lastName formu yanıtladı',
+        'body': '${form.title} formunu yanıtladı',
+        'userId': formOwner,
+        'formId': formId,
+        'responseId': docRef.id, // Match the responseId with Firestore ID
+        'timestamp': FieldValue.serverTimestamp(),
+      };
+
       await FirebaseFirestore.instance
-          .collection('form_responses')
-          .add(formResponse.toJson());
+          .collection('notifications')
+          .add(notification);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Center(child: Text('Yanıt başarıyla kaydedildi!'))),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Center(child: Text('Yanıt kaydedilirken hata oluştu'))),
+        SnackBar(content: Center(child: Text('Yanıt kaydedilirken hata oluştu'))),
       );
     }
   }
+
+
+  static Future<FormResponseModel?> getResponseById(String responseId) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('form_responses')
+          .doc(responseId)
+          .get();
+
+      if (doc.exists) {
+        return FormResponseModel.fromJson(doc.data()!);
+      } else {
+        print('No document found for the given responseId');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching response: $e');
+      return null;
+    }
+  }
+
+
 }

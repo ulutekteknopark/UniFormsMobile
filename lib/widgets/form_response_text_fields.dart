@@ -4,12 +4,14 @@ class FormResponseTextField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
   final String validatorMessage;
+  final bool enabled; // Eklenen parametre
 
   const FormResponseTextField({
     Key? key,
     required this.controller,
     required this.labelText,
     required this.validatorMessage,
+    this.enabled = true, // Varsayılan olarak true
   }) : super(key: key);
 
   @override
@@ -40,6 +42,7 @@ class FormResponseTextField extends StatelessWidget {
           }
           return null;
         },
+        enabled: enabled, // Eklenen parametre
       ),
     );
   }

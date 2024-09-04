@@ -1,21 +1,23 @@
-import 'package:deneme2/models/matris_component.dart';
-import 'package:deneme2/models/radio_button_component.dart';
-import 'package:deneme2/models/rating_scale_component.dart';
-import 'package:deneme2/models/text_field_component.dart';
 import 'package:flutter/cupertino.dart';
-
 import 'check_box_component.dart';
 import 'dropdown_menu_component.dart';
+import 'radio_button_component.dart';
+import 'rating_scale_component.dart';
+import 'text_field_component.dart';
+import 'matris_component.dart';
 
 abstract class FormComponent {
   String get id;
-
   bool get isRequired;
 
-  Widget buildComponent({Function(String)? onChanged});
+  // buildComponent metoduna initialValue ve enabled parametrelerini ekleyin
+  Widget buildComponent({
+    Function(String)? onChanged,
+    String initialValue = '',
+    bool enabled = true,
+  });
 
   Map<String, dynamic> toJson();
-
   void updateFromJson(Map<String, dynamic> json);
 
   static FormComponent fromJson(Map<String, dynamic> json) {
