@@ -1,7 +1,11 @@
 import 'package:deneme2/managers/text_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void showProfile(BuildContext context) {
+  final User? user = FirebaseAuth.instance.currentUser;
+  final String? userEmail = user?.email ?? 'Email not available';
+
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -31,8 +35,8 @@ void showProfile(BuildContext context) {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 45),
-                child: Text(TextManager().exampleEmail),
+                padding: const EdgeInsets.only(left: 35),
+                child: Text(userEmail ?? 'Email not available'),
               ),
               const SizedBox(height: 25),
               Padding(
@@ -42,6 +46,7 @@ void showProfile(BuildContext context) {
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
+              /*
               const SizedBox(height: 25),
               Padding(
                 padding: const EdgeInsets.only(left: 35),
@@ -50,6 +55,7 @@ void showProfile(BuildContext context) {
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
+              */
             ],
           ),
         ),

@@ -11,7 +11,6 @@ void showAddRadioButtonsDialog(
     TextEditingController()
   ];
   final isRequired = ValueNotifier<bool>(false);
-  int? groupValue;
 
   if (component != null) {
     _titleController.text = component.title;

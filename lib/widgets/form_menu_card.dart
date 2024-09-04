@@ -1,5 +1,3 @@
-import 'package:deneme2/screens/home_screen.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';

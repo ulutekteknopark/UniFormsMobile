@@ -1,4 +1,3 @@
-import 'package:deneme2/main.dart';
 import 'package:deneme2/managers/text_manager.dart';
 import 'package:deneme2/screens/log_in_screen.dart';
 import 'package:deneme2/screens/sign_up.dart';

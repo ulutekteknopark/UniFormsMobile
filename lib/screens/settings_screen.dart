@@ -47,7 +47,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         SizedBox(height: height),
         _settings(
-          icon: Icons.person,
+          icon: Icons.notifications_active,
           subtitle: TextManager().notificationsSub,
           title: TextManager().notifications,
           onTap: () {
@@ -56,7 +56,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         SizedBox(height: height),
         _settings(
-          icon: Icons.person,
+          icon: Icons.language,
           subtitle: TextManager().languageSub,
           title: TextManager().language,
           onTap: () {
@@ -65,7 +65,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         SizedBox(height: height),
         _settings(
-          icon: Icons.person,
+          icon: Icons.help,
           subtitle: TextManager().helpSub,
           title: TextManager().help,
           onTap: () {
@@ -74,7 +74,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         SizedBox(height: height),
         _settings(
-          icon: Icons.person,
+          icon: Icons.gavel,
           subtitle: TextManager().termsSub,
           title: TextManager().termsAndConditions,
           onTap: () {
@@ -83,7 +83,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         SizedBox(height: height),
         _settings(
-          icon: Icons.person,
+          icon: Icons.lock,
           subtitle: TextManager().privacySub,
           title: TextManager().privacyPolicy,
           onTap: () {

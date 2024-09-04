@@ -1,11 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:deneme2/managers/text_manager.dart';
 import 'package:deneme2/screens/log_or_sign_up.dart';
 import 'package:deneme2/screens/form_response_screen.dart'; // Import the FormResponseScreen
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart'; // Import Firebase Dynamic Links
-import 'package:lottie/lottie.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});

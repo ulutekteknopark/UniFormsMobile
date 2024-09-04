@@ -66,6 +66,7 @@ class _TextFieldComponentWidget extends StatefulWidget {
 }
 
 class __TextFieldComponentWidgetState extends State<_TextFieldComponentWidget> {
+  // ignore: unused_field
   String _text = '';
 
   @override
