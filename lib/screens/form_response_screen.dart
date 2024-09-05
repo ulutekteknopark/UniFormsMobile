@@ -25,7 +25,7 @@ class _FormResponseScreenState extends State<FormResponseScreen> {
   void initState() {
     super.initState();
     _formResponseService = FormResponseService(formId: widget.formId);
-    _formFuture = _formResponseService.fetchForm();
+    _formFuture = FormResponseService.fetchFormById(widget.formId);
   }
 
   @override
@@ -94,7 +94,7 @@ class _FormResponseScreenState extends State<FormResponseScreen> {
                             );
                           },
                         ),
-                        SizedBox(height: 80.0), // Buton için boşluk bırakma
+                        SizedBox(height: 80.0),
                       ],
                     ),
                   ),

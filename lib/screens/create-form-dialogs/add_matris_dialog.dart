@@ -16,12 +16,12 @@ void showAddMatrisDialog(
   bool isRequired = false;
 
   if (component != null) {
-    _headlineController.text = component.headline;
+    _headlineController.text = component.title;
     _headlineColorController.value = component.headlineColor;
     _matrisColorController.value = component.matrisColor;
     _rowNumController.value = component.rowNum;
     _colNumController.value = component.colNum;
-    isRequired = component.isRequired; // Initialize the boolean value
+    isRequired = component.isRequired;
   }
 
   showDialog(
@@ -137,7 +137,7 @@ void showAddMatrisDialog(
                   if (_headlineController.text.isNotEmpty) {
                     final newComponent = MatrisComponent(
                       id: component?.id ?? Uuid().v4(),
-                      headline: _headlineController.text,
+                      title: _headlineController.text,
                       rowNum: _rowNumController.value,
                       colNum: _colNumController.value,
                       headlineColor: _headlineColorController.value,

@@ -7,11 +7,11 @@ void showAddTextFieldDialog(
     BuildContext context, void Function(FormComponent) onAddComponent,
     {TextFieldComponent? component}) {
   final _titleController = TextEditingController();
-  bool isRequired = false; // Changed from ValueNotifier<bool> to bool
+  bool isRequired = false;
 
   if (component != null) {
     _titleController.text = component.title;
-    isRequired = component.isRequired; // Initialize the boolean value
+    isRequired = component.isRequired;
   }
 
   showDialog(

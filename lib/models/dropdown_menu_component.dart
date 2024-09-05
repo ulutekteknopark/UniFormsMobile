@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'form_component.dart';
 
 class DropdownComponent extends FormComponent {
+  @override
   final String id;
   String title;
   List<String> options;
+  @override
   bool isRequired;
 
   DropdownComponent({
@@ -15,8 +17,11 @@ class DropdownComponent extends FormComponent {
   });
 
   @override
+  String get type => 'dropdown';
+
+  @override
   Widget buildComponent({
-    Function(String)? onChanged,
+    Function(dynamic)? onChanged,
     String initialValue = '',
     bool enabled = true,
   }) {
@@ -64,7 +69,7 @@ class _DropdownComponentWidget extends StatefulWidget {
   final String title;
   final List<String> options;
   final bool isRequired;
-  final Function(String)? onChanged;
+  final Function(dynamic)? onChanged;
   final String initialValue;
   final bool enabled;
 
@@ -148,13 +153,13 @@ class __DropdownComponentWidgetState extends State<_DropdownComponentWidget> {
                   widget.onChanged?.call(newValue ?? '');
                 }
                     : null,
-                underline: SizedBox(), // Alt çizgi kaldırıldı
+                underline: SizedBox(),
                 style: TextStyle(
                   color: Colors.black87,
                   fontSize: 16,
                 ),
                 iconSize: 24,
-                icon: Icon(Icons.arrow_drop_down, color: Colors.black87), // İkon rengi ve boyutu ayarlandı
+                icon: Icon(Icons.arrow_drop_down, color: Colors.black87),
               ),
             ),
             SizedBox(height: 8),

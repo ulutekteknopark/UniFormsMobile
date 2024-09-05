@@ -10,17 +10,16 @@ void showAddCheckboxDialog(
   final List<TextEditingController> optionControllers = [
     TextEditingController()
   ];
-  bool isRequired = false; // Changed from ValueNotifier<bool> to bool
+  bool isRequired = false;
 
   if (component != null) {
     _titleController.text = component.title;
-    // Use the component's options to initialize the controllers
     optionControllers.clear();
     optionControllers.addAll(component.options.map((option) {
       final controller = TextEditingController(text: option);
       return controller;
     }));
-    isRequired = component.isRequired; // Initialize the boolean value
+    isRequired = component.isRequired;
   }
 
   showDialog(

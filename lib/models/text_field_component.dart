@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'form_component.dart';
 
 class TextFieldComponent extends FormComponent {
+  @override
   final String id;
   String title;
+  @override
   bool isRequired;
 
   TextFieldComponent({
@@ -13,8 +15,11 @@ class TextFieldComponent extends FormComponent {
   });
 
   @override
+  String get type => 'text';
+
+  @override
   Widget buildComponent({
-    Function(String)? onChanged,
+    Function(dynamic)? onChanged,
     String initialValue = '',
     bool enabled = true,
   }) {
@@ -52,11 +57,12 @@ class TextFieldComponent extends FormComponent {
     );
   }
 }
+
 class _TextFieldComponentWidget extends StatefulWidget {
   final String id;
   final String title;
   final bool isRequired;
-  final Function(String)? onChanged;
+  final Function(dynamic)? onChanged;
   final String initialValue;
   final bool enabled;
 
@@ -74,13 +80,20 @@ class _TextFieldComponentWidget extends StatefulWidget {
       __TextFieldComponentWidgetState();
 }
 
-class __TextFieldComponentWidgetState extends State<_TextFieldComponentWidget> {
-  late String _text;
+class __TextFieldComponentWidgetState
+    extends State<_TextFieldComponentWidget> {
+  late TextEditingController _controller;
 
   @override
   void initState() {
     super.initState();
-    _text = widget.initialValue;
+    _controller = TextEditingController(text: widget.initialValue);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -119,7 +132,7 @@ class __TextFieldComponentWidgetState extends State<_TextFieldComponentWidget> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: TextField(
-                controller: TextEditingController(text: _text),
+                controller: _controller,
                 decoration: InputDecoration(
                   contentPadding:
                   EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -128,10 +141,7 @@ class __TextFieldComponentWidgetState extends State<_TextFieldComponentWidget> {
                 ),
                 onChanged: widget.enabled
                     ? (String value) {
-                  setState(() {
-                    _text = value;
-                    widget.onChanged?.call(value);
-                  });
+                  widget.onChanged?.call(value);
                 }
                     : null,
                 enabled: widget.enabled,

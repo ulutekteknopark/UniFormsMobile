@@ -26,7 +26,7 @@ class _CreateFormState extends State<CreateForm> with TickerProviderStateMixin {
   List<FormComponent> components = [];
 
   final FormFirebaseService firebaseService =
-      FormFirebaseService(); // Servis sınıfını oluştur
+      FormFirebaseService();
 
   @override
   void initState() {

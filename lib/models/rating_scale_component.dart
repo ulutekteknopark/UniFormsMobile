@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'form_component.dart';
 
 class RatingScaleComponent extends FormComponent {
+  @override
   final String id;
   String title;
   String startLabel;
   String endLabel;
   int numberOfOptions;
+  @override
   bool isRequired;
 
   RatingScaleComponent({
@@ -19,8 +21,11 @@ class RatingScaleComponent extends FormComponent {
   });
 
   @override
+  String get type => 'rating_scale';
+
+  @override
   Widget buildComponent({
-    Function(String)? onChanged,
+    Function(dynamic)? onChanged,
     String initialValue = '',
     bool enabled = true,
   }) {
@@ -70,6 +75,7 @@ class RatingScaleComponent extends FormComponent {
     );
   }
 }
+
 class _RatingScaleComponentWidget extends StatefulWidget {
   final String id;
   final String title;
@@ -77,7 +83,7 @@ class _RatingScaleComponentWidget extends StatefulWidget {
   final String endLabel;
   final int numberOfOptions;
   final bool isRequired;
-  final Function(String)? onChanged;
+  final Function(dynamic)? onChanged;
   final String initialValue;
   final bool enabled;
 

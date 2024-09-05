@@ -3,7 +3,7 @@ import 'form_component.dart';
 
 class MatrisComponent extends FormComponent {
   final String id;
-  String headline;
+  String title;
   int rowNum;
   int colNum;
   Color headlineColor;
@@ -12,13 +12,16 @@ class MatrisComponent extends FormComponent {
 
   MatrisComponent({
     required this.id,
-    required this.headline,
+    required this.title,
     this.rowNum = 2,
     this.colNum = 3,
     this.headlineColor = Colors.grey,
     this.matrisColor = Colors.white,
     this.isRequired = false,
   });
+
+  @override
+  String get type => 'matris';
 
   @override
   Widget buildComponent({
@@ -37,7 +40,7 @@ class MatrisComponent extends FormComponent {
 
     return _MatrisComponentWidget(
       id: id,
-      headline: headline,
+      title: title,
       rowNum: rowNum,
       colNum: colNum,
       headlineColor: headlineColor,
@@ -54,7 +57,7 @@ class MatrisComponent extends FormComponent {
     return {
       'type': 'matris',
       'id': id,
-      'headline': headline,
+      'title': title,
       'rowNum': rowNum,
       'colNum': colNum,
       'headlineColor': headlineColor.value,
@@ -65,7 +68,7 @@ class MatrisComponent extends FormComponent {
 
   @override
   void updateFromJson(Map<String, dynamic> json) {
-    headline = json['headline'] ?? headline;
+    title = json['title'] ?? title;
     rowNum = json['rowNum'] ?? rowNum;
     colNum = json['colNum'] ?? colNum;
     headlineColor = Color(json['headlineColor'] ?? headlineColor.value);
@@ -76,7 +79,7 @@ class MatrisComponent extends FormComponent {
   static MatrisComponent fromJson(Map<String, dynamic> json) {
     return MatrisComponent(
       id: json['id'],
-      headline: json['headline'],
+      title: json['title'],
       rowNum: json['rowNum'] ?? 2,
       colNum: json['colNum'] ?? 3,
       headlineColor: Color(json['headlineColor'] ?? Colors.grey.value),
@@ -87,7 +90,7 @@ class MatrisComponent extends FormComponent {
 }
 class _MatrisComponentWidget extends StatefulWidget {
   final String id;
-  final String headline;
+  final String title;
   final int rowNum;
   final int colNum;
   final Color headlineColor;
@@ -99,7 +102,7 @@ class _MatrisComponentWidget extends StatefulWidget {
 
   _MatrisComponentWidget({
     required this.id,
-    required this.headline,
+    required this.title,
     required this.rowNum,
     required this.colNum,
     required this.headlineColor,
@@ -167,7 +170,7 @@ class __MatrisComponentWidgetState extends State<_MatrisComponentWidget> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.headline,
+              widget.title,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 16,
@@ -192,7 +195,7 @@ class __MatrisComponentWidgetState extends State<_MatrisComponentWidget> {
                         decoration: InputDecoration(
                           border: InputBorder.none,
                         ),
-                        enabled: widget.enabled, // Field'in etkin olup olmadığını kontrol et
+                        enabled: widget.enabled,
                       ),
                     );
                   }),

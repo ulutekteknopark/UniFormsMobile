@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'form_component.dart';
 
 class RadioButtonComponent extends FormComponent {
+  @override
   final String id;
   String title;
   List<String> options;
+  @override
   bool isRequired;
 
   RadioButtonComponent({
@@ -15,8 +17,11 @@ class RadioButtonComponent extends FormComponent {
   });
 
   @override
+  String get type => 'radio';
+
+  @override
   Widget buildComponent({
-    Function(String)? onChanged,
+    Function(dynamic)? onChanged,
     String initialValue = '',
     bool enabled = true,
   }) {
@@ -58,12 +63,13 @@ class RadioButtonComponent extends FormComponent {
     );
   }
 }
+
 class _RadioButtonComponentWidget extends StatefulWidget {
   final String id;
   final String title;
   final List<String> options;
   final bool isRequired;
-  final Function(String)? onChanged;
+  final Function(dynamic)? onChanged;
   final String initialValue;
   final bool enabled;
 

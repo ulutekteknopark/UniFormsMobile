@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'form_component.dart';
 
 class CheckBoxComponent extends FormComponent {
+  @override
   final String id;
   String title;
   List<String> options;
+  @override
   bool isRequired;
 
   CheckBoxComponent({
@@ -15,8 +17,11 @@ class CheckBoxComponent extends FormComponent {
   });
 
   @override
+  String get type => 'checkbox';
+
+  @override
   Widget buildComponent({
-    Function(String)? onChanged,
+    Function(dynamic)? onChanged,
     String initialValue = '',
     bool enabled = true,
   }) {
@@ -58,12 +63,13 @@ class CheckBoxComponent extends FormComponent {
     );
   }
 }
+
 class _CheckBoxComponentWidget extends StatefulWidget {
   final String id;
   final String title;
   final List<String> options;
   final bool isRequired;
-  final Function(String)? onChanged;
+  final Function(dynamic)? onChanged;
   final String initialValue;
   final bool enabled;
 
@@ -90,7 +96,6 @@ class __CheckBoxComponentWidgetState extends State<_CheckBoxComponentWidget> {
     super.initState();
     _selectedOptions = List<bool>.filled(widget.options.length, false);
 
-    // Set initial values based on initialValue
     if (widget.initialValue.isNotEmpty) {
       List<String> selectedOptions = widget.initialValue.split(',');
       for (var option in selectedOptions) {
@@ -147,7 +152,14 @@ class __CheckBoxComponentWidgetState extends State<_CheckBoxComponentWidget> {
                           setState(() {
                             _selectedOptions[index] = value ?? false;
                           });
-                          widget.onChanged?.call(option);
+
+                          List<String> selectedOptions = [];
+                          for (int i = 0; i < _selectedOptions.length; i++) {
+                            if (_selectedOptions[i]) {
+                              selectedOptions.add(widget.options[i]);
+                            }
+                          }
+                          widget.onChanged?.call(selectedOptions);
                         }
                             : null,
                       ),

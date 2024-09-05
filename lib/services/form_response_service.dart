@@ -1,23 +1,34 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
 import '../models/form_model.dart';
 import '../models/form_response_model.dart';
 
 class FormResponseService {
   final String formId;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   FormResponseService({required this.formId});
 
-  Future<FormModel> fetchForm() async {
-    final doc =
-    await FirebaseFirestore.instance.collection('forms').doc(formId).get();
-    return FormModel.fromJson(doc.data()!);
+  static Future<FormModel> fetchFormById(String formId) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('forms')
+          .doc(formId)
+          .get();
+
+      if (doc.exists) {
+        return FormModel.fromJson(doc.data()!);
+      } else {
+        throw Exception('Form bulunamadı');
+      }
+    } catch (e) {
+      throw Exception('Form yüklenirken hata oluştu: $e');
+    }
   }
 
   Future<bool> isEmailAlreadyUsed(String email) async {
-    final querySnapshot = await FirebaseFirestore.instance
+    final querySnapshot = await _firestore
         .collection('form_responses')
         .where('formId', isEqualTo: formId)
         .where('email', isEqualTo: email)
@@ -31,23 +42,6 @@ class FormResponseService {
       r'^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|yahoo\.com|protonmail\.com|outlook\.com|icloud\.com|proton\.me)$',
     );
     return emailRegex.hasMatch(email);
-  }
-
-  static Future<FormModel> fetchFormById(String formId) async {
-    try {
-      final doc = await FirebaseFirestore.instance
-          .collection('forms') // Form koleksiyonunun adını buraya yazın
-          .doc(formId)
-          .get();
-
-      if (doc.exists) {
-        return FormModel.fromJson(doc.data()!);
-      } else {
-        throw Exception('Form bulunamadı');
-      }
-    } catch (e) {
-      throw Exception('Form yüklenirken hata oluştu: $e');
-    }
   }
 
   Future<void> submitForm({
@@ -96,7 +90,7 @@ class FormResponseService {
     }
 
     try {
-      final docRef = FirebaseFirestore.instance.collection('form_responses').doc();
+      final docRef = _firestore.collection('form_responses').doc();
       final formResponse = FormResponseModel(
         formId: formId,
         email: email,
@@ -104,7 +98,7 @@ class FormResponseService {
         surname: lastName,
         responses: responses,
         userId: FirebaseAuth.instance.currentUser!.uid,
-        responseId: docRef.id,  // Assign the Firestore document ID
+        responseId: docRef.id,
       );
 
       await docRef.set(formResponse.toJson());
@@ -115,11 +109,11 @@ class FormResponseService {
         'body': '${form.title} formunu yanıtladı',
         'userId': formOwner,
         'formId': formId,
-        'responseId': docRef.id, // Match the responseId with Firestore ID
+        'responseId': docRef.id,
         'timestamp': FieldValue.serverTimestamp(),
       };
 
-      await FirebaseFirestore.instance
+      await _firestore
           .collection('notifications')
           .add(notification);
 
@@ -132,7 +126,6 @@ class FormResponseService {
       );
     }
   }
-
 
   static Future<FormResponseModel?> getResponseById(String responseId) async {
     try {
@@ -153,5 +146,14 @@ class FormResponseService {
     }
   }
 
+  Future<List<FormResponseModel>> fetchFormResponses() async {
+    final querySnapshot = await _firestore
+        .collection('form_responses')
+        .where('formId', isEqualTo: formId)
+        .get();
 
+    return querySnapshot.docs
+        .map((doc) => FormResponseModel.fromJson(doc.data()))
+        .toList();
+  }
 }

@@ -3,7 +3,7 @@ import 'package:deneme2/screens/log_or_sign_up.dart';
 import 'package:deneme2/screens/form_response_screen.dart'; // Import the FormResponseScreen
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart'; // Import Firebase Dynamic Links
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -20,7 +20,6 @@ class _SplashState extends State<Splash> {
   }
 
   void _handleDynamicLinks() async {
-    // Uygulama açıldığında dinamik bağlantı kontrolü
     FirebaseDynamicLinks.instance.onLink
         .listen((PendingDynamicLinkData? dynamicLinkData) {
       _navigateToFormResponseScreen(dynamicLinkData?.link);
@@ -28,7 +27,6 @@ class _SplashState extends State<Splash> {
       print('Link Error: ${error.toString()}');
     });
 
-    // Uygulama kapalıyken dinamik bağlantı kontrolü
     final PendingDynamicLinkData? data =
         await FirebaseDynamicLinks.instance.getInitialLink();
     _navigateToFormResponseScreen(data?.link);

@@ -46,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.grey,
           ),
           selectedItemColor: Color.fromARGB(255, 125, 17, 192),
-          // Seçili yazı rengi
           unselectedItemColor: Colors.grey,
         ),
       ),

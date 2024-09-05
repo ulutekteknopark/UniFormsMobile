@@ -11,14 +11,14 @@ void showAddRatingScaleDialog(
   final _startLabelController = TextEditingController();
   final _endLabelController = TextEditingController();
   int numberOfOptions = 5;
-  final isRequired = ValueNotifier<bool>(false); // Yeni özellik
+  final isRequired = ValueNotifier<bool>(false);
 
   if (component != null) {
     _titleController.text = component.title;
     _startLabelController.text = component.startLabel;
     _endLabelController.text = component.endLabel;
     numberOfOptions = component.numberOfOptions;
-    isRequired.value = component.isRequired; // Yeni özellik
+    isRequired.value = component.isRequired;
   }
 
   showDialog(
@@ -112,7 +112,7 @@ void showAddRatingScaleDialog(
                       startLabel: _startLabelController.text,
                       endLabel: _endLabelController.text,
                       numberOfOptions: numberOfOptions,
-                      isRequired: isRequired.value, // Yeni özellik
+                      isRequired: isRequired.value,
                     );
                     onAddComponent(newComponent);
                     Navigator.pop(context);

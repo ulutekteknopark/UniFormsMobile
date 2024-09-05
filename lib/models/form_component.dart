@@ -1,18 +1,22 @@
+import 'package:deneme2/models/radio_button_component.dart';
+import 'package:deneme2/models/rating_scale_component.dart';
+import 'package:deneme2/models/text_field_component.dart';
 import 'package:flutter/cupertino.dart';
+
 import 'check_box_component.dart';
 import 'dropdown_menu_component.dart';
-import 'radio_button_component.dart';
-import 'rating_scale_component.dart';
-import 'text_field_component.dart';
 import 'matris_component.dart';
 
 abstract class FormComponent {
   String get id;
+  String get title;
   bool get isRequired;
 
-  // buildComponent metoduna initialValue ve enabled parametrelerini ekleyin
+  // Yeni type getter
+  String get type;
+
   Widget buildComponent({
-    Function(String)? onChanged,
+    Function(dynamic)? onChanged,
     String initialValue = '',
     bool enabled = true,
   });

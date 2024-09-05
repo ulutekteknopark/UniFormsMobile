@@ -4,6 +4,7 @@ import 'package:share/share.dart';
 
 import '../models/form_model.dart';
 import '../screens/create_form.dart';
+import '../screens/form_response_analysis_screen.dart';
 import '../services/form_firebase_service.dart';
 
 class MenuCardWidget {
@@ -43,7 +44,15 @@ class MenuCardWidget {
               ListTile(
                 leading: Icon(Icons.mail_outline, color: Colors.black),
                 title: Text('Form Yanıtları'),
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => FormResponseAnalysisScreen(
+                        formId: form.id,
+                      ),
+                    ),
+                  );
+                },
               ),
               ListTile(
                 leading: Icon(Icons.edit, color: Colors.black),
@@ -76,7 +85,6 @@ class MenuCardWidget {
                   await FormFirebaseService().deleteForm(context, form);
                 },
               ),
-              // Menü kartına alt padding ekleniyor
               Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
               ),

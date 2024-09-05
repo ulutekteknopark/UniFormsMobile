@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../models/check_box_component.dart';
 import '../models/form_model.dart';
 import '../models/form_response_model.dart';
 import '../services/form_response_service.dart';
@@ -58,38 +59,50 @@ class FormResponseDetailScreen extends StatelessWidget {
                         children: [
                           Expanded(
                             child: FormResponseTextField(
-                              controller:
-                                  TextEditingController(text: response.name),
+                              controller: TextEditingController(text: response.name),
                               labelText: 'İsim',
-                              enabled: false, validatorMessage: '',
+                              enabled: false,
+                              validatorMessage: '',
                             ),
                           ),
                           SizedBox(width: 16.0),
                           Expanded(
                             child: FormResponseTextField(
-                              controller:
-                                  TextEditingController(text: response.surname),
+                              controller: TextEditingController(text: response.surname),
                               labelText: 'Soyisim',
-                              enabled: false, validatorMessage: '',
+                              enabled: false,
+                              validatorMessage: '',
                             ),
                           ),
                         ],
                       ),
                       SizedBox(height: 16.0),
-                      ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: form.components.length,
-                        itemBuilder: (context, index) {
-                          final component = form.components[index];
-                          final responseValue =
-                              response.responses[component.id] ?? '';
-                          return component.buildComponent(
-                            initialValue: responseValue,
-                            onChanged: (value) {},
-                            enabled: false,
-                          );
-                        },
+                      Column(
+                        children: form.components.map((component) {
+                          final responseValue = response.responses[component.id];
+
+                          // Veriyi String türüne dönüştür
+                          String displayValue = '';
+                          if (responseValue is List) {
+                            displayValue = responseValue.join(','); // Listeyi String'e çevir
+                          } else if (responseValue != null) {
+                            displayValue = responseValue.toString();
+                          }
+
+                          if (component is CheckBoxComponent) {
+                            return component.buildComponent(
+                              initialValue: displayValue,
+                              onChanged: (value) {},
+                              enabled: false,
+                            );
+                          } else {
+                            return component.buildComponent(
+                              initialValue: displayValue,
+                              onChanged: (value) {},
+                              enabled: false,
+                            );
+                          }
+                        }).toList(),
                       ),
                       SizedBox(height: 80.0),
                     ],
