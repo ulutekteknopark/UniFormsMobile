@@ -20,14 +20,20 @@ class EditTab extends StatefulWidget {
   final void Function(List<FormComponent>) onComponentsChanged;
   final List<FormComponent> components;
   final void Function(String) onTitleChanged;
+  final void Function(DateTime?, DateTime?) onDatesChanged;
+  final DateTime? validFrom;
+  final DateTime? validUntil;
 
-  EditTab(
-      {required this.initialFormTitle,
-      required this.onComponentsChanged,
-      required this.components,
-      required this.onTitleChanged,
-      Key? key})
-      : super(key: key);
+  EditTab({
+    required this.initialFormTitle,
+    required this.onComponentsChanged,
+    required this.components,
+    required this.onTitleChanged,
+    required this.onDatesChanged,
+    this.validFrom,
+    this.validUntil,
+    Key? key,
+  }) : super(key: key);
 
   @override
   EditTabState createState() => EditTabState();
@@ -36,12 +42,35 @@ class EditTab extends StatefulWidget {
 class EditTabState extends State<EditTab> {
   late String formTitle;
   late List<FormComponent> components;
+  DateTime? validFrom;
+  DateTime? validUntil;
 
   @override
   void initState() {
     super.initState();
     formTitle = widget.initialFormTitle;
     components = widget.components;
+    validFrom = widget.validFrom;
+    validUntil = widget.validUntil;
+  }
+
+  Future<void> _selectDate(BuildContext context, bool isFromDate) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      setState(() {
+        if (isFromDate) {
+          validFrom = picked;
+        } else {
+          validUntil = picked;
+        }
+        widget.onDatesChanged(validFrom, validUntil);
+      });
+    }
   }
 
   void _addComponent(FormComponent component) {
@@ -96,9 +125,9 @@ class EditTabState extends State<EditTab> {
               },
               icon: Icon(Icons.add, color: Colors.white),
               label:
-                  Text('Bileşen Ekle', style: TextStyle(color: Colors.white)),
+              Text('Bileşen Ekle', style: TextStyle(color: Colors.white)),
               style:
-                  ElevatedButton.styleFrom(backgroundColor: Color(0xFF65558F)),
+              ElevatedButton.styleFrom(backgroundColor: Color(0xFF65558F)),
             ),
           ),
           SizedBox(height: 20),
@@ -123,54 +152,102 @@ class EditTabState extends State<EditTab> {
               ],
             ),
           ),
-          SizedBox(height: 40),
-          ...components.asMap().entries.map((entry) {
-            FormComponent component = entry.value;
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  component.buildComponent(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {
-                          if (component is TextFieldComponent) {
-                            showAddTextFieldDialog(context, _updateComponent,
-                                component: component);
-                          } else if (component is CheckBoxComponent) {
-                            showAddCheckboxDialog(context, _updateComponent,
-                                component: component);
-                          } else if (component is RadioButtonComponent) {
-                            showAddRadioButtonsDialog(context, _updateComponent,
-                                component: component);
-                          } else if (component is DropdownComponent) {
-                            showAddDropdownDialog(context, _updateComponent,
-                                component: component);
-                          } else if (component is RatingScaleComponent) {
-                            showAddRatingScaleDialog(context, _updateComponent,
-                                component: component);
-                          } else if (component is MatrisComponent) {
-                            showAddMatrisDialog(context, _updateComponent,
-                                component: component);
-                          }
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          _deleteComponent(component);
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
+          ListTile(
+            title: Text("Geçerlilik Başlangıç Tarihi: ${validFrom != null ? validFrom.toString().split(' ')[0] : 'Seçilmedi'}"),
+            trailing: Icon(Icons.calendar_today),
+            onTap: () => _selectDate(context, true),
+          ),
+          ListTile(
+            title: Text("Geçerlilik Bitiş Tarihi:          ${validUntil != null ? validUntil.toString().split(' ')[0] : 'Seçilmedi'}"),
+            trailing: Icon(Icons.calendar_today),
+            onTap: () => _selectDate(context, false),
+          ),
+          SizedBox(height: 20),
+          components.isEmpty
+              ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.description,
+                  size: 80,
+                  color: Colors.black54,
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Formunuzda herhangi bir bileşen yok.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, color: Colors.black54),
+                ),
+                Text(
+                  'Form oluşturmak için "Bileşen Ekle" butonuna basınız.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, color: Colors.black54),
+                ),
+                Text(
+                  'Formu kaydetmek için "Ön İzle" ekranındaki "Formu Kaydet" butonuna basınız.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, color: Colors.black54),
+                ),
+              ],
+            ),
+          )
+              : Column(
+            children: components.asMap().entries.map((entry) {
+              FormComponent component = entry.value;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    component.buildComponent(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () {
+                            if (component is TextFieldComponent) {
+                              showAddTextFieldDialog(context,
+                                  _updateComponent,
+                                  component: component);
+                            } else if (component is CheckBoxComponent) {
+                              showAddCheckboxDialog(context,
+                                  _updateComponent,
+                                  component: component);
+                            } else if (component is RadioButtonComponent) {
+                              showAddRadioButtonsDialog(context,
+                                  _updateComponent,
+                                  component: component);
+                            } else if (component is DropdownComponent) {
+                              showAddDropdownDialog(context,
+                                  _updateComponent,
+                                  component: component);
+                            } else if (component
+                            is RatingScaleComponent) {
+                              showAddRatingScaleDialog(context,
+                                  _updateComponent,
+                                  component: component);
+                            } else if (component is MatrisComponent) {
+                              showAddMatrisDialog(context,
+                                  _updateComponent,
+                                  component: component);
+                            }
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            _deleteComponent(component);
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
         ],
       ),
     );

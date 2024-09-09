@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../managers/chart_response_builder.dart';
+import '../managers/export_responses_to_pdf.dart';
 import '../models/form_model.dart';
 import '../models/form_response_model.dart';
 import '../services/form_response_service.dart';
@@ -62,11 +63,26 @@ class _FormResponseAnalysisScreenState
                 form: form,
               );
 
-              return ListView(
-                padding: EdgeInsets.all(16),
+              return Column(
                 children: [
-                  TextFieldResponses(responses: responses, form: form),
-                  ...chartBuilder.build(),
+                  Expanded(
+                    child: ListView(
+                      padding: EdgeInsets.all(16),
+                      children: [
+                        TextFieldResponses(responses: responses, form: form),
+                        ...chartBuilder.build(),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        await exportResponsesToPDF(responses, form);
+                      },
+                      child: Text('PDF Olarak Dışa Aktar'),
+                    ),
+                  ),
                 ],
               );
             },

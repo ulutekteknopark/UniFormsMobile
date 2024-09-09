@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 
@@ -8,7 +7,9 @@ import '../screens/form_response_analysis_screen.dart';
 import '../services/form_firebase_service.dart';
 
 class MenuCardWidget {
-  static void showMenuCard(BuildContext context, FormModel form) {
+  static Future<void> showMenuCard(BuildContext context, FormModel form) async {
+    bool hasResponses = await FormFirebaseService().hasFormResponses(form.id);
+
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -55,9 +56,11 @@ class MenuCardWidget {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.edit, color: Colors.black),
-                title: Text('Düzenle'),
-                onTap: () {
+                leading: Icon(Icons.edit, color: hasResponses ? Colors.grey : Colors.black),
+                title: Text('Düzenle', style: TextStyle(color: hasResponses ? Colors.grey : Colors.black)),
+                onTap: hasResponses
+                    ? null // Yanıt varsa düzenlemeyi devre dışı bırakıyoruz
+                    : () {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
@@ -74,7 +77,7 @@ class MenuCardWidget {
                 title: Text('Paylaş'),
                 onTap: () async {
                   String link =
-                      await FormFirebaseService().createDynamicLink(form.id);
+                  await FormFirebaseService().createDynamicLink(form.id);
                   Share.share('Bu formu yanıtlayabilirsiniz: $link');
                 },
               ),
@@ -82,7 +85,10 @@ class MenuCardWidget {
                 leading: Icon(Icons.delete_forever, color: Colors.red),
                 title: Text('Sil', style: TextStyle(color: Colors.red)),
                 onTap: () async {
-                  await FormFirebaseService().deleteForm(context, form);
+                  bool confirmDelete = await _showDeleteConfirmationDialog(context);
+                  if (confirmDelete) {
+                    await FormFirebaseService().deleteFormWithResponsesAndNotifications(context, form);
+                  }
                 },
               ),
               Padding(
@@ -90,6 +96,33 @@ class MenuCardWidget {
               ),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  static Future<bool> _showDeleteConfirmationDialog(BuildContext context) async {
+    return await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Center(child : Text('Formu sil')),
+          content: Text('Bu formla ilgili tüm veriler silinecek. Bu formu ve form yanıtlarını silmek istediğinizden emin misiniz?'),
+          contentTextStyle: TextStyle(color: Colors.black, fontSize: 17),
+          actions: <Widget>[
+            TextButton(
+              child: Text('İptal'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text('Sil', style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
         );
       },
     );

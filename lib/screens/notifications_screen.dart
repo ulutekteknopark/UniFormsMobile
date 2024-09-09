@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../models/notification_model.dart';
 import '../widgets/notification_item.dart';
@@ -16,8 +17,11 @@ class _NotificationScreenState extends State<NotificationsScreen> {
   @override
   void initState() {
     super.initState();
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
     _notificationsStream = FirebaseFirestore.instance
         .collection('notifications')
+        .where('userId', isEqualTo: userId)
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs

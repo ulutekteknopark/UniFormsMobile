@@ -60,4 +60,6 @@ class TextManager {
   String pushN = 'Push bildirimleri';
   String emailN = 'E-posta bildirimleri';
   String smsN = 'SMS Bildirimleri';
+  String firstName = 'İsim';
+  String lastName = 'Soyisim';
 }

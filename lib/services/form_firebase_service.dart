@@ -12,7 +12,7 @@ class FormFirebaseService {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> saveFormToFirestore(BuildContext context, FormModel? form,
-      String formTitle, List<FormComponent> components) async {
+      String formTitle, List<FormComponent> components, DateTime? validFrom, DateTime? validUntil) async {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
@@ -26,6 +26,8 @@ class FormFirebaseService {
       'userId': user.uid,
       'title': formTitle,
       'components': components.map((component) => component.toJson()).toList(),
+      'validFrom': validFrom != null ? Timestamp.fromDate(validFrom) : null,
+      'validUntil': validUntil != null ? Timestamp.fromDate(validUntil) : null,
     };
 
     try {
@@ -94,6 +96,55 @@ class FormFirebaseService {
       );
       throw Exception('Form silinirken hata oluştu.');
     }
+  }
+
+  Future<void> deleteFormWithResponsesAndNotifications(BuildContext context, FormModel form) async {
+    try {
+      await firestore.collection('forms').doc(form.id).delete();
+
+      final responseSnapshot = await firestore
+          .collection('form_responses')
+          .where('formId', isEqualTo: form.id)
+          .get();
+
+      for (var doc in responseSnapshot.docs) {
+        await doc.reference.delete();
+      }
+
+      final notificationSnapshot = await firestore
+          .collection('notifications')
+          .where('formId', isEqualTo: form.id)
+          .get();
+
+      for (var doc in notificationSnapshot.docs) {
+        await doc.reference.delete();
+      }
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomeScreen(),
+        ),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Form ve ilgili yanıtlar başarıyla silindi.')),
+      );
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Form silinirken bir hata oluştu: $e')),
+      );
+    }
+  }
+
+  Future<bool> hasFormResponses(String formId) async {
+    final responseSnapshot = await FirebaseFirestore.instance
+        .collection('form_responses')
+        .where('formId', isEqualTo: formId)
+        .get();
+
+    return responseSnapshot.docs.isNotEmpty;
   }
 
   Future<String> createDynamicLink(String formId) async {

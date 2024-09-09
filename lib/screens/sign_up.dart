@@ -13,10 +13,11 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  TextEditingController();
   bool _obscurePassword = false;
   bool _isTermsAccepted = false;
   bool _isKVKKAccepted = false;
@@ -68,14 +69,31 @@ class _SignUpState extends State<SignUp> {
               isPassword: false,
               labelText: TextManager().email,
             ),
-            BuildTextField(
-              controller: _usernameController,
-              hintText: TextManager().username,
-              keyboardType: TextInputType.text,
-              textInputAction: TextInputAction.next,
-              obscureText: false,
-              isPassword: false,
-              labelText: TextManager().username,
+            Row(
+              children: [
+                Expanded(
+                  child: BuildTextField(
+                    controller: _firstNameController,
+                    hintText: TextManager().firstName,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.next,
+                    obscureText: false,
+                    isPassword: false,
+                    labelText: TextManager().firstName,
+                  ),
+                ),
+                Expanded(
+                  child: BuildTextField(
+                    controller: _lastNameController,
+                    hintText: TextManager().lastName,
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.next,
+                    obscureText: false,
+                    isPassword: false,
+                    labelText: TextManager().lastName,
+                  ),
+                ),
+              ],
             ),
             BuildTextField(
               controller: _passwordController,
@@ -141,14 +159,14 @@ class _SignUpState extends State<SignUp> {
               onPressed: _signUp,
               style: ElevatedButton.styleFrom(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 60, vertical: 15.0),
+                const EdgeInsets.symmetric(horizontal: 60, vertical: 15.0),
                 backgroundColor: const Color(0XFF21005D),
               ),
               child: Text(
                 TextManager().signUp,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white,
-                    ),
+                  color: Colors.white,
+                ),
               ),
             ),
             SizedBox(height: 20),
@@ -187,12 +205,14 @@ class _SignUpState extends State<SignUp> {
     final email = _emailController.text;
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
+    final firstName = _firstNameController.text;
+    final lastName = _lastNameController.text;
 
-    if (email.isEmpty || password.isEmpty) {
+    if (email.isEmpty || password.isEmpty || firstName.isEmpty || lastName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Center(
-            child: Text('E-posta ve şifre alanları zorunludur.'),
+            child: Text('E-posta, şifre, isim ve soyisim alanları zorunludur.'),
           ),
           backgroundColor: Colors.red,
         ),
@@ -227,6 +247,8 @@ class _SignUpState extends State<SignUp> {
     await _firebaseAuthService.signUpWithEmailAndPassword(
       email: email,
       password: password,
+      firstName: firstName,
+      lastName: lastName,
       context: context,
     );
   }

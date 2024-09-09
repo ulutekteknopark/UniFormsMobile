@@ -1,14 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:deneme2/managers/text_manager.dart';
 import 'package:deneme2/screens/log_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 import '../screens/home_screen.dart';
 
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> signInWithEmailAndPassword({
     required String email,
@@ -40,11 +41,13 @@ class FirebaseAuthService {
   Future<void> signUpWithEmailAndPassword({
     required String email,
     required String password,
+    required String firstName,
+    required String lastName,
     required BuildContext context,
   }) async {
     try {
       UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
+      await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -52,6 +55,11 @@ class FirebaseAuthService {
 
       if (user != null) {
         await user.sendEmailVerification();
+        await _firestore.collection('users').doc(user.uid).set({
+          'firstName': firstName,
+          'lastName': lastName,
+          'email': email,
+        });
         showVerificationDialog(context);
       }
     } on FirebaseAuthException catch (e) {
@@ -63,7 +71,7 @@ class FirebaseAuthService {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
+      await googleUser!.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -71,7 +79,7 @@ class FirebaseAuthService {
       );
 
       UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
+      await _auth.signInWithCredential(credential);
       User? user = userCredential.user;
 
       if (user != null) {
@@ -113,8 +121,6 @@ class FirebaseAuthService {
         } else {
           showSnackBar(context, 'Lütfen emailinizi onaylayın.');
         }
-      } else {
-        showSnackBar(context, 'Kullanıcı girişi yapılmamış.');
       }
     } catch (e) {
       showSnackBar(context, 'Bir hata oluştu: ${e.toString()}');
@@ -184,7 +190,7 @@ class FirebaseAuthService {
 
   void showForgotPasswordDialog(BuildContext context) {
     final TextEditingController _forgotPasswordController =
-        TextEditingController();
+    TextEditingController();
 
     showDialog(
       context: context,

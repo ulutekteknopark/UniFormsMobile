@@ -24,6 +24,8 @@ class _CreateFormState extends State<CreateForm> with TickerProviderStateMixin {
 
   final GlobalKey<EditTabState> editTabKey = GlobalKey<EditTabState>();
   List<FormComponent> components = [];
+  DateTime? validFrom;
+  DateTime? validUntil;
 
   final FormFirebaseService firebaseService =
       FormFirebaseService();
@@ -36,6 +38,8 @@ class _CreateFormState extends State<CreateForm> with TickerProviderStateMixin {
     if (widget.isEditing && widget.form != null) {
       formTitle = widget.form!.title;
       components = widget.form!.components;
+      validFrom = widget.form!.validFrom;
+      validUntil = widget.form!.validUntil;
       titleController.text = formTitle;
     }
 
@@ -61,6 +65,13 @@ class _CreateFormState extends State<CreateForm> with TickerProviderStateMixin {
   void updateFormTitle(String newTitle) {
     setState(() {
       formTitle = newTitle;
+    });
+  }
+
+  void updateValidityDates(DateTime? from, DateTime? until) {
+    setState(() {
+      validFrom = from;
+      validUntil = until;
     });
   }
 
@@ -99,14 +110,19 @@ class _CreateFormState extends State<CreateForm> with TickerProviderStateMixin {
             EditTab(
                 initialFormTitle: formTitle,
                 components: components,
+                validFrom: validFrom,
+                validUntil: validUntil,
                 onComponentsChanged: updateComponents,
                 onTitleChanged: updateFormTitle,
+                onDatesChanged: updateValidityDates,
                 key: editTabKey),
             PreviewTab(
               formTitle: formTitle,
               components: components,
               firebaseService: firebaseService,
               form: widget.form,
+              validFrom: validFrom,
+              validUntil: validUntil,
             ),
           ],
         ),

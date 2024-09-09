@@ -12,7 +12,6 @@ abstract class FormComponent {
   String get title;
   bool get isRequired;
 
-  // Yeni type getter
   String get type;
 
   Widget buildComponent({
